@@ -19,15 +19,14 @@ getCommentTag() {
 		return $FALSE_STATUS
 	fi
 
-	echo $(exiftool -S -Comment "$filename" | head -1 | cut -d":" -f2)
+	echo "$(exiftool -S -Comment "$filename" | head -1 | cut -d":" -f2 | cut -c 2-)"
 }
 
 
 isToCloud() {
-
 	declare filename="$1"
 	if [ -z "$1" ]; then
-		>&2 echo "ERROR: argument: not passed filename as argument 1" > 2
+		>&2 echo "ERROR: argument: not passed filename as argument 1"
 		return $FALSE_STATUS
 	fi
 
@@ -45,9 +44,14 @@ markAsToCloud() {
 		return $FALSE_STATUS
 	fi
 
+	if isToCloud "$filename"; then
+		>&2 echo "ERROR: $filename is already marked as to cloud"
+		return $FALSE_STATUS
+	fi
+
 	declare comment=$(getCommentTag $filename)
 
-	exiftool -S -Comment="$comment$exportMetadataTag" "$fileName"
+	exiftool -S -Comment="$comment$exportMetadataTag" "$filename"
 }
 
 
