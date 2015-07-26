@@ -5,7 +5,7 @@ Encoding=UTF-8
 ServiceTypes=KonqPopupMenu/Plugin
 
 MimeType=image/*;video/*;
-Actions=markAsToCloud;isToCloud;
+Actions=markAsToCloud;markAsNotToCloud;isToCloud;
 
 X-KDE-Submenu=Photo Exporter
 X-KDE-Priority=TopLevel
@@ -15,6 +15,11 @@ X-KDE-Priority=TopLevel
 Exec=photoExporter markAsToCloud %u
 Name=Mark file as "to cloud"
 Icon=mail-forward
+
+[Desktop Action markAsNotToCloud]
+Exec=photoExporter markAsNotToCloud %u
+Name=Mark file as NOT "to cloud"
+Icon=dialog-cancel
 
 [Desktop Action isToCloud]
 Exec=photoExporter isToCloud %u

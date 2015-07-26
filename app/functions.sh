@@ -52,6 +52,25 @@ markAsToCloud() {
 	exiftool -overwrite_original -S -Comment="$comment$exportMetadataTag" "$filename"
 }
 
+markAsNotToCloud() {
+	declare filename="$1"
+	if [ -z "$1" ]; then
+		>&2 echo "ERROR: argument: not passed filename as argument 1"
+		return $FALSE_STATUS
+	fi
+
+	if ! isToCloud "$filename"; then
+		>&2 echo "ERROR: $filename is already marked as not to cloud"
+		return $FALSE_STATUS
+	fi
+
+	declare comment=$(getCommentTag "$filename")
+
+	comment=$(echo -n "$comment" | sed -e "s/${exportMetadataTag} *//")
+
+	exiftool -overwrite_original -S -Comment="$comment" "$filename"
+}
+
 
 getAllToCloudFiles() {
 	declare dir="$1"
