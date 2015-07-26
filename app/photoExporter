@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+
+declare scriptName="$1"
+shift
+
+source "$DIR/${scriptName}.sh"
