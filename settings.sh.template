@@ -1,5 +1,7 @@
 mainPhotosDir=
-exportDir=
+exportDir="$mainPhotosDir/cloudExport"
+exportedDataFile="${exportDir}/exportedCurrent"
+exportNewFilesDir="${exportDir}/newFiles"
 scanDir=
 
 exportMetadataTag=";toCloud"

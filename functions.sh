@@ -64,32 +64,67 @@ getAllToCloudFiles() {
 	while read filename
 	do
 		isToCloud "$filename" && echo "$filename"
-	done
+	done |\
+	sort -u
 }
 
 
-# --files-from=FILE
-#	tylko pliki wymienione w pliku FILE będą transferowane
+createSymlinksToNewFiles() {
+	declare newFiles="$1"
+
+	echo "Removing old 'new files'"
+	rm -rf "$exportNewFilesDir"
+	mkdir "$exportNewFilesDir"
+
+	pushd "$exportNewFilesDir" > /dev/null
+	echo -n "$newFiles" | while read newFile
+	do
+		echo "Creating link to file $newFile ..."
+		mkdir -p "$(dirname $newFile)"
+		pushd "$scanDir" > /dev/null
+		ln -s "$(readlink -f $newFile)" "$exportNewFilesDir/$newFile"
+		popd > /dev/null
+	done
+	popd > /dev/null
+}
 
 prepareFilesFromListToCloud() {
-	declare dir="$1"
 	if [[ -z "$1" ]] || [[ ! -f "$1" ]]; then
 		>&2 echo "ERROR: first argument must be a file containing file list"
 		return $FALSE_STATUS
 	fi
+	declare newDataFile="$1"
 
-	if [[ ! -d "${exportDir}/exportedCurrent" ]]; then mkdir "${exportDir}/exportedCurrent"; fi
+	if [[ ! -f "$exportedDataFile" ]]; then touch "$exportedDataFile"; fi
 
-	echo "Preparing files to cloud..."
-	rsync -av --files-from=/tmp/photosExport --progress --link-dest="${exportDir}/exportedCurrent" "${scanDir}" "${exportDir}/exported-${date}" &&
-	ln -sf "exported-${date}" "${exportDir}/exportedCurrent"
+	echo "Calculating new files list..."
+	declare newFiles=$(comm -13 "$exportedDataFile" "$newDataFile")
+
+	if [[ -z "$newFiles" ]]; then
+		echo -e "-----------------------------------"
+		echo -e "  There is no new files to export"
+		echo -e "-----------------------------------"
+	fi
+
+	createSymlinksToNewFiles "$newFiles"
+
+	echo "Saving new exported file list"
+	mv "$exportedDataFile" "$exportedDataFile-$date"
+	mv "$newDataFile" "$exportedDataFile"
+
+	#rsync -av --files-from=/tmp/photosExport --progress --link-dest="${exportDir}/exportedCurrent" "${scanDir}" "${exportDir}/exported-${date}" &&
+	#ln -sf "exported-${date}" "${exportDir}/exportedCurrent"
 }
 
 prepareFilesToCloud() {
 	declare photosExportFile=/tmp/photosExport
-	echo "Getting flagged files list..."
-	getAllToCloudFiles "${scanDir}" > $photosExportFile
+	echo "Scanning for flagged files..."
+	pushd "${scanDir}" > /dev/null
+	getAllToCloudFiles . > $photosExportFile
+	popd > /dev/null
 
-	echo "Prepering files from list to cloud..."
+	echo "Prepering flagged files to cloud..."
 	prepareFilesFromListToCloud $photosExportFile
+
+	echo "== Files successfully prepared to cloud =="
 }
