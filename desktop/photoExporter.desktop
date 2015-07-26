@@ -1,0 +1,22 @@
+[Desktop Entry]
+Type=Service
+Encoding=UTF-8
+
+ServiceTypes=KonqPopupMenu/Plugin
+
+MimeType=image/*;video/*;
+Actions=markAsToCloud;isToCloud;
+
+X-KDE-Submenu=Photo Exporter
+X-KDE-Priority=TopLevel
+
+
+[Desktop Action markAsToCloud]
+Exec=photoExporter markAsToCloud %u
+Name=Mark file as "to cloud"
+Icon=mail-forward
+
+[Desktop Action isToCloud]
+Exec=photoExporter isToCloud %u
+Name=Check status
+Icon=document-preview

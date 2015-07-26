@@ -49,7 +49,7 @@ markAsToCloud() {
 
 	declare comment=$(getCommentTag "$filename")
 
-	exiftool -S -Comment="$comment$exportMetadataTag" "$filename"
+	exiftool -overwrite_original -S -Comment="$comment$exportMetadataTag" "$filename"
 }
 
 
@@ -127,4 +127,13 @@ prepareFilesToCloud() {
 	prepareFilesFromListToCloud $photosExportFile
 
 	echo "== Files successfully prepared to cloud =="
+}
+
+displayMessage() {
+	if tty -s
+	then
+	    echo "$1"
+	else
+		zenity --info --text="$1"
+	fi
 }

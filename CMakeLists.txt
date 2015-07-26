@@ -25,3 +25,19 @@ install(CODE "
 ")
 
 add_custom_target(uninstall COMMAND xargs rm < install_manifest.txt)
+
+
+set ( KDE_SERVICE_MENU_FILE_NAME "photoExporter.desktop")
+set ( KDE_SERVICE_MENU_CONFIG_DIR "$ENV{HOME}/.kde/share/kde4/services/ServiceMenus/")
+set ( KDE_SERVICE_MENU_CONFIG_LOCAL_FILE "${CMAKE_SOURCE_DIR}/desktop/photoExporter.desktop" )
+
+add_custom_command(
+	OUTPUT "${KDE_SERVICE_MENU_CONFIG_DIR}/${KDE_SERVICE_MENU_FILE_NAME}"
+	MAIN_DEPENDENCY ${KDE_SERVICE_MENU_CONFIG_LOCAL_FILE}
+    COMMAND mkdir -p "${KDE_SERVICE_MENU_CONFIG_DIR}" && cp $< $@
+)
+
+add_custom_target(
+	install_user_config
+	DEPENDS "${KDE_SERVICE_MENU_CONFIG_DIR}/${KDE_SERVICE_MENU_FILE_NAME}"
+)
