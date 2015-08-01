@@ -4,7 +4,7 @@ DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
 
 source "$DIR/functions.sh"
 
-isToCloud $@
+isToCloud "$@"
 declare result=$?
 
 if [[ "$result" == $TRUE_STATUS ]]; then

@@ -3,5 +3,5 @@
 DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
 source "$DIR/functions.sh"
 
-prepareFilesToCloud $@
+prepareFilesToCloud "$@"
 exit $?
