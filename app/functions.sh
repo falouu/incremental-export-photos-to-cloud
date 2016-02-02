@@ -96,12 +96,13 @@ createSymlinksToNewFiles() {
 	mkdir "$exportNewFilesDir"
 
 	pushd "$exportNewFilesDir" > /dev/null
-	echo -n "$newFiles" | while read newFile
+	echo "$newFiles" | while read newFile
 	do
+		if [[ -z "$newFile" ]]; then continue; fi
 		echo "Creating link to file $newFile ..."
-		mkdir -p "$(dirname $newFile)"
+		mkdir -p "$(dirname "$newFile")"
 		pushd "$scanDir" > /dev/null
-		ln -s "$(readlink -f $newFile)" "$exportNewFilesDir/$newFile"
+		ln -s "$(readlink -f "$newFile")" "$exportNewFilesDir/$newFile"
 		popd > /dev/null
 	done
 	popd > /dev/null
